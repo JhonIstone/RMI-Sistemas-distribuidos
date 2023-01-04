@@ -41,7 +41,8 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
             throw new RemoteException("can't get inet address.");
         }
         thisPort = porta; // this port(registry�s port)
-        System.out.println("this address=" + thisAddress + ",port=" + thisPort);
+        System.out.println("Conectado address=" + thisAddress + "- port=" + thisPort);
+
         try {
             // create the registry and bind the name and object.
             registry = LocateRegistry.createRegistry(thisPort);
