@@ -8,17 +8,26 @@ import java.net.*;
 import java.util.*;
 
 public class RmiServer extends java.rmi.server.UnicastRemoteObject implements ReceiveMessageInterface {
-    int thisPort;
-    String thisAddress;
-    // List<Integer> array = new ArrayList<Integer>();
+    private int id;
+    private int thisPort;
+    private String thisAddress;
+    Registry registry;
+    private String database;
 
-    Registry registry; // rmi registry for lookup the remote objects.
+    Conexao conecta = new Conexao();
+    ArrayList<RmiServer> servers = new ArrayList<RmiServer>();
 
-    // This method is called from the remote client by the RMI.
-    // This is the implementation of the �ReceiveMessageInterface�.
-    public int receiveMessage(String comandoSql) throws RemoteException {
-        Conexao conecta = new Conexao();
-        Connection con = conecta.Conexao();
+    public void receiveMessage(String comandoSql) throws RemoteException {
+        for (RmiServer server : servers) {
+            server.sendCommand(comandoSql);
+        }
+        this.sendCommand(comandoSql);
+    }
+
+    private int sendCommand(String comandoSql) {
+        Connection con = conecta.Conexao("jdbc:sqlserver://localhost:1433", "joao.santos",
+                "joao3257",
+                database);
 
         Statement stmt;
         try {
@@ -27,24 +36,23 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
             con.close();
             return 200;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return e.getErrorCode();
         }
     }
 
-    public RmiServer(Integer porta) throws RemoteException {
+    public RmiServer(Integer porta, int id, String dataBase) throws RemoteException {
         try {
-            // get the address of this host.
-            thisAddress = (InetAddress.getLocalHost()).toString();
+            this.thisAddress = (InetAddress.getLocalHost()).toString();
+            this.id = id;
+            this.database = dataBase;
         } catch (Exception e) {
             throw new RemoteException("can't get inet address.");
         }
-        thisPort = porta; // this port(registry�s port)
-        System.out.println("Conectado address=" + thisAddress + "- port=" + thisPort);
+        this.thisPort = porta;
+        System.out.println("Conectado address=" + this.thisAddress + "- port=" + this.thisPort);
 
         try {
-            // create the registry and bind the name and object.
             registry = LocateRegistry.createRegistry(thisPort);
             registry.rebind("rmiServer", this);
         } catch (RemoteException e) {
@@ -52,13 +60,7 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
         }
     }
 
-    static public void main(String args[]) {
-        try {
-            RmiServer server1 = new RmiServer(3232);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+    public void addNewMember(RmiServer server) {
+        servers.add(server);
     }
-
 }

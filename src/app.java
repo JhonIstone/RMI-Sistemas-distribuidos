@@ -4,9 +4,9 @@ public class app {
 
     public static void main(String[] args) {
         try {
-            RmiServer server1 = new RmiServer(3232);
+            RmiServer server1 = new RmiServer(3232, 0, "sistemasdistribuidos");
+            server1.addNewMember(new RmiServer(3333, 1, "sistemasdistribuidos2"));
         } catch (RemoteException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

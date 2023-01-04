@@ -32,11 +32,10 @@ public class RmiClient {
         System.out.print("Informe o comando SQL: ");
         String sql = scanner.nextLine();
 
-        int status;
         try {
-            status = this.rmiServer.receiveMessage(sql);
-            System.out.printf("Codigo Status: %d", status);
-            System.out.println();
+            this.rmiServer.receiveMessage(sql);
+            // System.out.printf("Codigo Status: %d", status);
+            // System.out.println();
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

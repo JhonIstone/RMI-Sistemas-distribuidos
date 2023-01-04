@@ -7,20 +7,25 @@ public class Conexao {
     public Statement stm;
     public ResultSet rs;
     private String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private String caminho = "jdbc:sqlserver://localhost:1433;/" + "databaseName=sistemasdistribuidos";
-    private String usuario = "jhoni";
-    private String senha = "@Joao3257";
+    private String caminho;
+    private String usuario;
+    private String senha;
+    private String database;
     private Connection con;
 
-    public Connection Conexao() {
+    public Connection Conexao(String caminho, String usuario, String senha, String dataBase) {
+        this.caminho = caminho;
+        this.usuario = usuario;
+        this.senha = senha;
+        this.database = dataBase;
+
         try {
             System.setProperty("jdbc.Drivers", driver);
-            con = DriverManager.getConnection(
-                    "jdbc:sqlserver://localhost:1433;databaseName=sistemasdistribuidos;user=joao.santos;password=joao3257;encrypt=false");
+            con = DriverManager.getConnection(this.caminho + ";" + "databaseName=" + this.database + ";" + "user="
+                    + this.usuario + ";" + "password=" + this.senha + ";" + "encrypt=false");
             System.out.println("Conectou");
             return con;
         } catch (Exception e) {
-            // TODO: handle exception
             System.out.println(e);
         }
         return con;
