@@ -33,42 +33,16 @@ public class RmiClient {
         String sql = scanner.nextLine();
 
         try {
-            this.rmiServer.receiveMessage(sql);
-            // System.out.printf("Codigo Status: %d", status);
-            // System.out.println();
+            int status = this.rmiServer.receiveMessage(sql);
+            System.out.println(status);
+            // if (status == 200)
+            // this.rmiServer.commitChanges();
+            // else
+            // System.out.println("Erro");
+            // this.rmiServer.rollbackChanges();
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
-    // static public void main(String args[]) {
-    // ReceiveMessageInterface rmiServer;
-    // Registry registry;
-    // String serverAddress = "localhost";
-    // String serverPort = "3232";
-
-    // while (true) {
-    // // String sql = "CREATE TABLE users (id INTEGER PRIMARY KEY, name
-    // VARCHAR(255),
-    // // email VARCHAR(255))";
-    // // String sql = "INSERT INTO users (id, name, email) VALUES (2, 'JOAO',
-    // // 'JPCAR200@GMAIL.COM')" ;
-    // Scanner scanner = new Scanner(System.in);
-    // System.out.print("Informe o comando SQL: ");
-    // String sql = scanner.nextLine();
-    // try {
-    // registry = LocateRegistry.getRegistry(serverAddress, (new
-    // Integer(serverPort)).intValue());
-    // rmiServer = (ReceiveMessageInterface) (registry.lookup("rmiServer"));
-    // int status = rmiServer.receiveMessage(sql);
-    // System.out.printf("Codigo Status: %d", status);
-    // System.out.println();
-    // } catch (RemoteException e) {
-    // e.printStackTrace();
-    // } catch (NotBoundException e) {
-    // e.printStackTrace();
-    // }
-    // }
-    // }
 }

@@ -1,5 +1,9 @@
 import java.rmi.*;
 
 public interface ReceiveMessageInterface extends Remote {
-	void receiveMessage(String comandoSql) throws RemoteException;
+	int receiveMessage(String comandoSql) throws RemoteException;
+
+	// void commitChanges() throws RemoteException;
+
+	// void rollbackChanges() throws RemoteException;
 }
