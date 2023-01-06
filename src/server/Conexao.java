@@ -1,3 +1,5 @@
+package server;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -26,7 +28,7 @@ public class Conexao {
             System.out.println("Conectou");
             return con;
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Falha ao conectar banco");
         }
         return con;
     }

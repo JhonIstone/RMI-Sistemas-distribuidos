@@ -1,3 +1,5 @@
+package server;
+
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
@@ -6,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.net.*;
 import java.util.*;
+
+import interfaces.ReceiveMessageInterface;
 
 public class RmiServer extends java.rmi.server.UnicastRemoteObject implements ReceiveMessageInterface {
     private int id;
@@ -17,11 +21,14 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
     ArrayList<RmiServer> servers = new ArrayList<RmiServer>();
 
     public int receiveMessage(String comandoSql) throws RemoteException {
-        // servers.remove(1);
+        int status = this.sendCommand(comandoSql); // 208
+        if (status != 200) {
+            System.out.println("Erro maquina principal");
+            System.out.println();
+            return status;
+        }
 
-        // for (RmiServer server : servers) {
         for (int i = 0; i < servers.size(); i++) {
-            int status;
             status = servers.get(i).sendCommand(comandoSql);
             if (status == 200)
                 continue;
@@ -32,11 +39,6 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
             }
         }
 
-        int status = this.sendCommand(comandoSql);
-        if (status != 200) {
-            System.out.println("Erro maquina principal");
-            System.out.println();
-        }
         // for (RmiServer server : servers) {
         for (int i = 0; i < servers.size(); i++) {
             System.out.printf("Maquina: %d", servers.get(i).id);
@@ -46,17 +48,23 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
     }
 
     private int sendCommand(String comandoSql) {
-        Connection con = conecta.Conexao("jdbc:sqlserver://localhost:1433", "joao.santos", "joao3257", database);
-        Statement stmt;
-        try {
-            // con.setAutoCommit(false);
-            stmt = con.createStatement();
-            stmt.executeUpdate(comandoSql);
-            con.close();
-            return 200;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return e.getErrorCode();
+        try (Connection con = conecta.Conexao("jdbc:sqlserver://localhost:1433", "joao.santos", "joao3257", database)) {
+            Statement stmt;
+            try {
+                // con.setAutoCommit(false);
+                stmt = con.createStatement();
+                stmt.executeUpdate(comandoSql);
+                con.close();
+                return 200;
+            } catch (SQLException e) {
+                System.out.printf("erro na maquina %d", this.id);
+                System.out.println();
+                return e.getErrorCode();
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            // e.printStackTrace();
+            return 400;
         }
     }
 
@@ -82,4 +90,35 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
     public void addNewMember(RmiServer server) {
         this.servers.add(server);
     }
+
+    public ArrayList<RmiServer> getServers() {
+        return servers;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getThisPort() {
+        return thisPort;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getBiggerGroup() {
+        RmiServer server = null;
+
+        for (int i = 0; i < servers.size(); i++) {
+            if (server == null) {
+                server = servers.get(i);
+            } else if (servers.get(i).id > server.id) {
+                server = servers.get(i);
+            }
+        }
+        this.id = 0;
+        return server.thisPort;
+    }
+
 }
