@@ -53,7 +53,8 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
             try {
                 // con.setAutoCommit(false);
                 stmt = con.createStatement();
-                stmt.executeUpdate(comandoSql);
+                stmt.execute(comandoSql);
+                // stmt.executeUpdate(comandoSql);
                 con.close();
                 return 200;
             } catch (SQLException e) {
