@@ -20,6 +20,25 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
     Conexao conecta = new Conexao();
     ArrayList<RmiServer> servers = new ArrayList<RmiServer>();
 
+    public RmiServer(Integer porta, int id, String dataBase) throws RemoteException {
+        try {
+            this.thisAddress = (InetAddress.getLocalHost()).toString();
+            this.id = id;
+            this.database = dataBase;
+            this.thisPort = porta;
+        } catch (Exception e) {
+            throw new RemoteException("can't get inet address.");
+        }
+
+        try {
+            registry = LocateRegistry.createRegistry(thisPort);
+            registry.rebind("rmiServer", this);
+            System.out.println("Conectado address=" + this.thisAddress + "- port=" + this.thisPort);
+        } catch (RemoteException e) {
+            throw e;
+        }
+    }
+
     public int receiveMessage(String comandoSql) throws RemoteException {
         int status = this.sendCommand(comandoSql); // 208
         if (status != 200) {
@@ -39,7 +58,6 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
             }
         }
 
-        // for (RmiServer server : servers) {
         for (int i = 0; i < servers.size(); i++) {
             System.out.printf("Maquina: %d", servers.get(i).id);
             System.out.println();
@@ -69,31 +87,8 @@ public class RmiServer extends java.rmi.server.UnicastRemoteObject implements Re
         }
     }
 
-    public RmiServer(Integer porta, int id, String dataBase) throws RemoteException {
-        try {
-            this.thisAddress = (InetAddress.getLocalHost()).toString();
-            this.id = id;
-            this.database = dataBase;
-        } catch (Exception e) {
-            throw new RemoteException("can't get inet address.");
-        }
-        this.thisPort = porta;
-        System.out.println("Conectado address=" + this.thisAddress + "- port=" + this.thisPort);
-
-        try {
-            registry = LocateRegistry.createRegistry(thisPort);
-            registry.rebind("rmiServer", this);
-        } catch (RemoteException e) {
-            throw e;
-        }
-    }
-
     public void addNewMember(RmiServer server) {
         this.servers.add(server);
-    }
-
-    public ArrayList<RmiServer> getServers() {
-        return servers;
     }
 
     public int getId() {

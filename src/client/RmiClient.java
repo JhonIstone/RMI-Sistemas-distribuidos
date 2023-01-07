@@ -45,20 +45,9 @@ public class RmiClient {
                 System.out.println("Trocando de server");
 
                 int newPorta = this.rmiServer.getBiggerGroup();
-
-                // if (newLeader != null) {
-                // ArrayList<RmiServer> servers = new
-                // ArrayList<RmiServer>(this.rmiServer.getServers());
-                // for (int i = 0; i < servers.size(); i++) {
-                // // if (servers.get(i).getId() != newLeader.getId())
-                // // newLeader.addNewMember(servers.get(i));
-                // System.out.println(servers.get(i).getId());
-                // }
-                // newLeader.setId(0);
                 this.serverPort = newPorta;
                 this.RmiConect();
                 this.RmiSendMessage(sql);
-                // }
             }
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
@@ -82,15 +71,6 @@ public class RmiClient {
 
                 int newPorta = this.rmiServer.getBiggerGroup();
 
-                // if (newLeader != null) {
-                // ArrayList<RmiServer> servers = new
-                // ArrayList<RmiServer>(this.rmiServer.getServers());
-                // for (int i = 0; i < servers.size(); i++) {
-                // // if (servers.get(i).getId() != newLeader.getId())
-                // // newLeader.addNewMember(servers.get(i));
-                // System.out.println(servers.get(i).getId());
-                // }
-                // newLeader.setId(0);
                 this.serverPort = newPorta;
                 this.RmiConect();
                 this.RmiSendMessage(sql);
